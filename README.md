@@ -39,6 +39,7 @@ A RESTful API for user management built with Spring Boot and MongoDB.
 - `PATCH /api/v1/users/verify-email/{code}` - Verify user email
 - `PATCH /api/v1/users/password/{id}` - Update password
 
+
 ## Setup
 
 1. Install dependencies:
@@ -49,10 +50,13 @@ A RESTful API for user management built with Spring Boot and MongoDB.
 
 2. Configure MongoDB:
 
-```properties
-spring.data.mongodb.host=localhost
-spring.data.mongodb.port=27017
-spring.data.mongodb.database=usermanagement
+Copy `example.env` to `.env` and set the following environment variables:
+
+```env
+MONGODB_HOST=localhost
+MONGODB_PORT=27017
+MONGODB_DATABASE=usermanagement
+LOG_LEVEL=ERROR
 ```
 
 3. Build:
