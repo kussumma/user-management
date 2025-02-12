@@ -7,29 +7,32 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 public class UserMapper {
 
-  public static UserResponseDTO toDTO(UserModel user) {
-    return UserResponseDTO.builder()
-        .id(user.getId())
-        .email(user.getEmail())
-        .role(user.getRole())
-        .firstName(user.getFirstName())
-        .lastName(user.getLastName())
-        .address(user.getAddress())
-        .phone(user.getPhone())
-        .avatar(user.getAvatar())
-        .build();
-  }
+    public static UserResponseDTO toDTO(UserModel user) {
+        return UserResponseDTO.builder()
+            .id(user.getId())
+            .email(user.getEmail())
+            .role(user.getRole())
+            .firstName(user.getFirstName())
+            .lastName(user.getLastName())
+            .address(user.getAddress())
+            .phone(user.getPhone())
+            .avatar(user.getAvatar())
+            .build();
+    }
 
-  public static UserModel toEntity(UserRequestDTO dto, PasswordEncoder passwordEncoder) {
-    return UserModel.builder()
-        .email(dto.getEmail())
-        .password(passwordEncoder.encode(dto.getPassword()))
-        .role(dto.getRole())
-        .firstName(dto.getFirstName())
-        .lastName(dto.getLastName())
-        .address(dto.getAddress())
-        .phone(dto.getPhone())
-        .avatar(dto.getAvatar())
-        .build();
-  }
+    public static UserModel toEntity(
+        UserRequestDTO dto,
+        PasswordEncoder passwordEncoder
+    ) {
+        return UserModel.builder()
+            .email(dto.getEmail())
+            .password(passwordEncoder.encode(dto.getPassword()))
+            .role(dto.getRole())
+            .firstName(dto.getFirstName())
+            .lastName(dto.getLastName())
+            .address(dto.getAddress())
+            .phone(dto.getPhone())
+            .avatar(dto.getAvatar())
+            .build();
+    }
 }

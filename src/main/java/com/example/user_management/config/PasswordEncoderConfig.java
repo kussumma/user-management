@@ -8,8 +8,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @Configuration
 public class PasswordEncoderConfig {
 
-	@Bean
-	public PasswordEncoder passwordEncoder() {
-		return new Argon2PasswordEncoder(16, 32, 1, 60000, 10);
-	}
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new Argon2PasswordEncoder(16, 32, 1, 60000, 10);
+    }
 }

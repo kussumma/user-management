@@ -19,21 +19,35 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public Page<UserResponseDTO> getAllUsers(int page, int size, String sortBy, String sortDirection) {
+    public Page<UserResponseDTO> getAllUsers(
+        int page,
+        int size,
+        String sortBy,
+        String sortDirection
+    ) {
         Sort sort = Sort.by(Sort.Direction.fromString(sortDirection), sortBy);
         Pageable pageable = PageRequest.of(page - 1, size, sort);
         return userRepository.findAll(pageable).map(UserMapper::toDTO);
     }
 
     public UserResponseDTO getUserById(String id) {
-        return userRepository.findById(id)
-                .map(UserMapper::toDTO)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+        return userRepository
+            .findById(id)
+            .map(UserMapper::toDTO)
+            .orElseThrow(() ->
+                new ResponseStatusException(
+                    HttpStatus.NOT_FOUND,
+                    "User not found"
+                )
+            );
     }
 
     public UserResponseDTO createUser(UserRequestDTO user) {
         if (userRepository.findByEmail(user.getEmail()).isPresent()) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "User with email already exists");
+            throw new ResponseStatusException(
+                HttpStatus.CONFLICT,
+                "User with email already exists"
+            );
         }
 
         UserModel newUser = UserMapper.toEntity(user, passwordEncoder);
@@ -42,15 +56,25 @@ public class UserService {
     }
 
     public UserResponseDTO updateUser(String id, UserRequestDTO userPayload) {
-        UserModel user = userRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+        UserModel user = userRepository
+            .findById(id)
+            .orElseThrow(() ->
+                new ResponseStatusException(
+                    HttpStatus.NOT_FOUND,
+                    "User not found"
+                )
+            );
 
-        userRepository.findByEmail(userPayload.getEmail())
-                .ifPresent(existingUser -> {
-                    if (!existingUser.getId().equals(id)) {
-                        throw new ResponseStatusException(HttpStatus.CONFLICT, "Email already in use");
-                    }
-                });
+        userRepository
+            .findByEmail(userPayload.getEmail())
+            .ifPresent(existingUser -> {
+                if (!existingUser.getId().equals(id)) {
+                    throw new ResponseStatusException(
+                        HttpStatus.CONFLICT,
+                        "Email already in use"
+                    );
+                }
+            });
 
         user.setFirstName(userPayload.getFirstName());
         user.setLastName(userPayload.getLastName());
@@ -69,43 +93,78 @@ public class UserService {
     }
 
     public UserResponseDTO updateUserRole(String id, String role) {
-        UserModel user = userRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+        UserModel user = userRepository
+            .findById(id)
+            .orElseThrow(() ->
+                new ResponseStatusException(
+                    HttpStatus.NOT_FOUND,
+                    "User not found"
+                )
+            );
 
         user.setRole(role);
         return UserMapper.toDTO(userRepository.save(user));
     }
 
     public UserResponseDTO updateUserAvatar(String id, String avatar) {
-        UserModel user = userRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+        UserModel user = userRepository
+            .findById(id)
+            .orElseThrow(() ->
+                new ResponseStatusException(
+                    HttpStatus.NOT_FOUND,
+                    "User not found"
+                )
+            );
 
         user.setAvatar(avatar);
         return UserMapper.toDTO(userRepository.save(user));
     }
 
     public UserResponseDTO updateUserEmail(String code, String email) {
-        UserModel user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+        UserModel user = userRepository
+            .findByEmail(email)
+            .orElseThrow(() ->
+                new ResponseStatusException(
+                    HttpStatus.NOT_FOUND,
+                    "User not found"
+                )
+            );
 
-        userRepository.findByEmail(email)
-                .ifPresent(existingUser -> {
-                    if (!existingUser.getEmail().equals(email)) {
-                        throw new ResponseStatusException(HttpStatus.CONFLICT, "Email already in use");
-                    }
-                });
+        userRepository
+            .findByEmail(email)
+            .ifPresent(existingUser -> {
+                if (!existingUser.getEmail().equals(email)) {
+                    throw new ResponseStatusException(
+                        HttpStatus.CONFLICT,
+                        "Email already in use"
+                    );
+                }
+            });
 
         user.setEmail(email);
         return UserMapper.toDTO(userRepository.save(user));
     }
 
-    public UserResponseDTO updateUserPassword(String id, String password, String confirmPassword) {
+    public UserResponseDTO updateUserPassword(
+        String id,
+        String password,
+        String confirmPassword
+    ) {
         if (!password.equals(confirmPassword)) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Passwords do not match");
+            throw new ResponseStatusException(
+                HttpStatus.BAD_REQUEST,
+                "Passwords do not match"
+            );
         }
 
-        UserModel user = userRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+        UserModel user = userRepository
+            .findById(id)
+            .orElseThrow(() ->
+                new ResponseStatusException(
+                    HttpStatus.NOT_FOUND,
+                    "User not found"
+                )
+            );
 
         user.setPassword(passwordEncoder.encode(password));
         return UserMapper.toDTO(userRepository.save(user));

@@ -12,6 +12,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Builder
 @Document(collection = "users")
 public class UserModel {
+
     @Id
     private String id;
 
