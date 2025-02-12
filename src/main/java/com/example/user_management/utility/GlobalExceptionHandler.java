@@ -14,6 +14,12 @@ import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.server.ResponseStatusException;
 
+/**
+ * GlobalExceptionHandler
+ * Handles exceptions thrown by the application
+ * It can handle ResponseStatusException and HttpClientErrorException
+ * to return the correct status code and message
+ */
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
