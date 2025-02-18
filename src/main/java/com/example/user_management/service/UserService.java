@@ -18,6 +18,7 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final UserMapper userMapper;
 
     public Page<UserResponseDTO> getAllUsers(
         int page,
@@ -27,13 +28,13 @@ public class UserService {
     ) {
         Sort sort = Sort.by(Sort.Direction.fromString(sortDirection), sortBy);
         Pageable pageable = PageRequest.of(page - 1, size, sort);
-        return userRepository.findAll(pageable).map(UserMapper::toDTO);
+        return userRepository.findAll(pageable).map(userMapper::toDTO);
     }
 
     public UserResponseDTO getUserById(String id) {
         return userRepository
             .findById(id)
-            .map(UserMapper::toDTO)
+            .map(userMapper::toDTO)
             .orElseThrow(() ->
                 new ResponseStatusException(
                     HttpStatus.NOT_FOUND,
@@ -50,9 +51,14 @@ public class UserService {
             );
         }
 
-        UserModel newUser = UserMapper.toEntity(user, passwordEncoder);
+        UserModel newUser = userMapper.toEntity(user);
+
+        // Set password
+        newUser.setPassword(passwordEncoder.encode(user.getPassword()));
+
+        // Save user
         userRepository.save(newUser);
-        return UserMapper.toDTO(newUser);
+        return userMapper.toDTO(newUser);
     }
 
     public UserResponseDTO updateUser(String id, UserRequestDTO userPayload) {
@@ -89,85 +95,7 @@ public class UserService {
             user.setPhone(userPayload.getPhone());
         }
 
-        return UserMapper.toDTO(userRepository.save(user));
-    }
-
-    public UserResponseDTO updateUserRole(String id, String role) {
-        UserModel user = userRepository
-            .findById(id)
-            .orElseThrow(() ->
-                new ResponseStatusException(
-                    HttpStatus.NOT_FOUND,
-                    "User not found"
-                )
-            );
-
-        user.setRole(role);
-        return UserMapper.toDTO(userRepository.save(user));
-    }
-
-    public UserResponseDTO updateUserAvatar(String id, String avatar) {
-        UserModel user = userRepository
-            .findById(id)
-            .orElseThrow(() ->
-                new ResponseStatusException(
-                    HttpStatus.NOT_FOUND,
-                    "User not found"
-                )
-            );
-
-        user.setAvatar(avatar);
-        return UserMapper.toDTO(userRepository.save(user));
-    }
-
-    public UserResponseDTO updateUserEmail(String code, String email) {
-        UserModel user = userRepository
-            .findByEmail(email)
-            .orElseThrow(() ->
-                new ResponseStatusException(
-                    HttpStatus.NOT_FOUND,
-                    "User not found"
-                )
-            );
-
-        userRepository
-            .findByEmail(email)
-            .ifPresent(existingUser -> {
-                if (!existingUser.getEmail().equals(email)) {
-                    throw new ResponseStatusException(
-                        HttpStatus.CONFLICT,
-                        "Email already in use"
-                    );
-                }
-            });
-
-        user.setEmail(email);
-        return UserMapper.toDTO(userRepository.save(user));
-    }
-
-    public UserResponseDTO updateUserPassword(
-        String id,
-        String password,
-        String confirmPassword
-    ) {
-        if (!password.equals(confirmPassword)) {
-            throw new ResponseStatusException(
-                HttpStatus.BAD_REQUEST,
-                "Passwords do not match"
-            );
-        }
-
-        UserModel user = userRepository
-            .findById(id)
-            .orElseThrow(() ->
-                new ResponseStatusException(
-                    HttpStatus.NOT_FOUND,
-                    "User not found"
-                )
-            );
-
-        user.setPassword(passwordEncoder.encode(password));
-        return UserMapper.toDTO(userRepository.save(user));
+        return userMapper.toDTO(userRepository.save(user));
     }
 
     public void deleteUser(String id) {

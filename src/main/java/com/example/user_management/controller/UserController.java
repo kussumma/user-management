@@ -9,9 +9,9 @@ import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -79,7 +79,7 @@ public class UserController {
 
     @PostMapping
     public ResponseEntity<ResponseWrapper<UserResponseDTO>> createUser(
-        @RequestBody UserRequestDTO user
+        @RequestBody @Validated UserRequestDTO user
     ) {
         UserResponseDTO createdUser = userService.createUser(user);
         ResponseWrapper<UserResponseDTO> responseWrapper =
@@ -94,7 +94,7 @@ public class UserController {
     @PutMapping("/{id}")
     public ResponseEntity<ResponseWrapper<UserResponseDTO>> updateUser(
         @PathVariable String id,
-        @RequestBody UserRequestDTO userDetails
+        @RequestBody @Validated UserRequestDTO userDetails
     ) {
         UserResponseDTO updatedUser = userService.updateUser(id, userDetails);
         ResponseWrapper<UserResponseDTO> responseWrapper =
@@ -102,71 +102,6 @@ public class UserController {
                 "User updated successfully",
                 200,
                 updatedUser
-            );
-        return ResponseEntity.ok(responseWrapper);
-    }
-
-    @PatchMapping("/avatar/{id}")
-    public ResponseEntity<ResponseWrapper<UserResponseDTO>> updateUserAvatar(
-        @PathVariable String id,
-        @RequestBody String avatar
-    ) {
-        UserResponseDTO patchedUser = userService.updateUserAvatar(id, avatar);
-        ResponseWrapper<UserResponseDTO> responseWrapper =
-            new ResponseWrapper<>(
-                "User updated successfully",
-                200,
-                patchedUser
-            );
-        return ResponseEntity.ok(responseWrapper);
-    }
-
-    @PatchMapping("/role/{id}")
-    public ResponseEntity<ResponseWrapper<UserResponseDTO>> updateUserRole(
-        @PathVariable String id,
-        @RequestBody String role
-    ) {
-        UserResponseDTO patchedUser = userService.updateUserRole(id, role);
-        ResponseWrapper<UserResponseDTO> responseWrapper =
-            new ResponseWrapper<>(
-                "User updated successfully",
-                200,
-                patchedUser
-            );
-        return ResponseEntity.ok(responseWrapper);
-    }
-
-    @PatchMapping("/verify-email/{code}")
-    public ResponseEntity<ResponseWrapper<UserResponseDTO>> updateUserEmail(
-        @PathVariable String code,
-        @RequestBody String email
-    ) {
-        UserResponseDTO patchedUser = userService.updateUserEmail(code, email);
-        ResponseWrapper<UserResponseDTO> responseWrapper =
-            new ResponseWrapper<>(
-                "User updated successfully",
-                200,
-                patchedUser
-            );
-        return ResponseEntity.ok(responseWrapper);
-    }
-
-    @PatchMapping("/password/{id}")
-    public ResponseEntity<ResponseWrapper<UserResponseDTO>> updateUserPassword(
-        @PathVariable String id,
-        @RequestBody String password,
-        @RequestBody String confirmPassword
-    ) {
-        UserResponseDTO patchedUser = userService.updateUserPassword(
-            id,
-            password,
-            confirmPassword
-        );
-        ResponseWrapper<UserResponseDTO> responseWrapper =
-            new ResponseWrapper<>(
-                "User updated successfully",
-                200,
-                patchedUser
             );
         return ResponseEntity.ok(responseWrapper);
     }

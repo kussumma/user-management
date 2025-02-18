@@ -1,12 +1,8 @@
 package com.example.user_management.dto.response;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
-@Getter
-@Setter
-@Builder
+@Data
 public class UserResponseDTO {
 
     private String id;
